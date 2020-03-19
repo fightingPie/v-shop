@@ -158,7 +158,7 @@
 <script>
 import { Tab, Tabs, Card, Panel, List, Step, Steps, Rate, Field } from 'vant'
 import { storage } from '@/common/util'
-import { pay_balance } from '@/common/pay'
+import { wxPay_jsapi } from '@/common/pay'
 import clipboard from '@/common/clipboard'
 
 export default {
@@ -282,16 +282,31 @@ export default {
     },
     onPayOrder() {
       const orderId = this.orderInfo.id
-      // const amountReal = this.orderInfo.amountReal
+      const amountReal = this.orderInfo.amountReal
       this.$toast.loading({
         mask: true,
         message: '支付提交中',
         duration: 0
       })
-      pay_balance(orderId, storage.get('token')).then(res => {
+      wxPay_jsapi(amountReal, '{type:0, id:' + orderId + '}', '在线支付', '', storage.get('token')).then(res => {
         if (res.code === 0) {
           this.$toast.clear()
-          this.$router.replace({ path: '/order-detail', query: { id: this.orderInfo.id }})
+          // this.$router.replace({ path: '/order-detail', query: { id: this.orderInfo.id }})
+          window.WeixinJSBridge.invoke(
+            'getBrandWCPayRequest', {
+              'appId': res.data.appid,
+              'timeStamp': res.data.timeStamp,
+              'nonceStr': res.data.nonceStr,
+              'package': 'prepay_id=' + res.data.prepayId,
+              'signType': 'MD5',
+              'paySign': res.data.sign
+            },
+            function(res) {
+              if (res.err_msg === 'get_brand_wcpay_request:ok') {
+                // this.$router.replace({ path: '/order-detail', query: { id: orderId }})
+                parent.location.reload()
+              }
+            })
         } else {
           this.$toast(res.msg)
         }

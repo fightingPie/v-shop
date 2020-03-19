@@ -18,6 +18,10 @@ Vue.prototype.$toast = Toast
 Vue.prototype.$dialog = Dialog
 Vue.prototype.$request = request
 
+const domain = document.domain
+window.subDomain = domain.substring(0, domain.indexOf('.'))
+window.goLogin = false
+
 router.beforeEach((to, from, next) => {
   // 统计代码
   window._hmt.push(['_trackPageview', to.fullPath])

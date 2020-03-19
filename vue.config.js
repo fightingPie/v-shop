@@ -13,6 +13,7 @@ module.exports = {
   productionSourceMap: false, // 去掉打包后js中，会自动生成的一些map文件
   devServer: {
     port: 8080, // 端口
+    disableHostCheck: true,
     proxy: {
       '/api': {
         target: 'http://wx.lohike.net',
@@ -21,7 +22,7 @@ module.exports = {
         pathRewrite: { '^/api': '' }
       },
       '/shop_api': {
-        target: 'https://api.it120.cc/xiaochengxu',
+        target: 'https://api.it120.cc/tz',
         changeOrigin: true, // target是域名的话，需要这个参数，
         secure: false, // 设置支持https协议的代理
         pathRewrite: { '^/shop_api': '' }

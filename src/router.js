@@ -37,7 +37,15 @@ const routes = [
     path: '/login',
     component: () => import(/* webpackChunkName: "login" */ '@/pages/login/login'),
     meta: {
-      title: '登录/注册'
+      title: '微信登录'
+    }
+  },
+  {
+    name: 'reg',
+    path: '/reg',
+    component: () => import(/* webpackChunkName: "login" */ '@/pages/login/reg'),
+    meta: {
+      title: '微信登录'
     }
   },
   {

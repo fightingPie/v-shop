@@ -8,12 +8,22 @@ import router from '@/router'
  * 携带当前页面路由，以期在登录页面完成登录后返回当前页面
  */
 const toLogin = () => {
-  setTimeout(() => {
-    router.replace({
-      path: '/login',
-      query: { redirect: router.currentRoute.fullPath }
+  // setTimeout(() => {
+  //   router.replace({
+  //     path: '/login',
+  //     query: { redirect: router.currentRoute.fullPath }
+  //   })
+  // }, 1500)
+  // 去授权登录
+  let _domian = 'http://' + document.domain + '/login?redirect=' + router.currentRoute.fullPath
+  _domian = encodeURIComponent(_domian)
+  if (!window.goLogin) {
+    window.goLogin = true
+    Axios.get(window.subDomain + '/site/statistics').then(res => {
+      // console.log(res.data)
+      parent.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + res.data.data.wxMpAppid + '&redirect_uri=' + _domian + '&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect'
     })
-  }, 1500)
+  }
 }
 /**
  * 请求响应异常
@@ -72,7 +82,7 @@ Axios.interceptors.response.use(
 const request = {
   get(url, data = {}, config = {}) {
     return new Promise((resolve, reject) => {
-      Axios.get(url, { params: data, ...config })
+      Axios.get(window.subDomain + url, { params: data, ...config })
         .then(res => {
           resolve(res.data)
         })
@@ -83,7 +93,7 @@ const request = {
   },
   post(url, data = {}, config = {}) {
     return new Promise((resolve, reject) => {
-      Axios.post(url, Qs.stringify(data), config)
+      Axios.post(window.subDomain + url, Qs.stringify(data), config)
         .then(res => {
           resolve(res.data)
         })
@@ -94,7 +104,7 @@ const request = {
   },
   uploadFile(url, data = {}, config = {}) {
     return new Promise((resolve, reject) => {
-      Axios.post(url, data, { headers: { 'Content-Type': 'multipart/form-data' }, ...config })
+      Axios.post(window.subDomain + url, data, { headers: { 'Content-Type': 'multipart/form-data' }, ...config })
         .then(res => {
           resolve(res.data)
         })

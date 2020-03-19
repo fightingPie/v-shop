@@ -57,7 +57,7 @@
     autosize
   />
 </van-cell-group>
-<van-cell-group class="mb20">
+<!-- <van-cell-group class="mb20">
    <van-cell title="支付工具"></van-cell>
    <van-cell title="余额" :label="'账户余额：￥'+balance+'元'" size="large">
        <template slot="default">
@@ -69,7 +69,7 @@
   </template>
    </van-cell>
 
-</van-cell-group>
+</van-cell-group> -->
   <van-cell title="商品金额" :value="'¥'+goodsPrice"></van-cell>
   <van-cell v-if="isNeedLogistics" title="运费" value="+0.00"></van-cell>
   <van-cell v-if="hasDiscount" title="优惠" :value="'-'+youhui"></van-cell>
@@ -123,7 +123,7 @@ export default {
       isNeedLogistics: true, // 是否需要物流信息
       hasDiscount: false,
       goodsInfo: [],
-      isBalancePay: true, //  钱包支付
+      isBalancePay: false, //  钱包支付
       balance: 0,
       expireMinutes: 60,
       marketing: {}

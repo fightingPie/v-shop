@@ -1,51 +1,5 @@
 <template>
   <div class="loading">正在登录...</div>
-  <!-- <div class="container bgf">
-    <van-tabs v-model="current" type="card" class="my-tab" >
-      <van-tab title="登录">
-        <van-field v-model="mobile"
-          clearable
-          type="tel"
-          label="手机号"
-          placeholder="请输入手机号" />
-        <van-field v-model="pwd"
-          type="password"
-          label="密码"
-          placeholder="请输入密码" />
-        <div class="btn-area">
-          <van-button type="danger" round size="large" @click="formSubmit">确定登录</van-button>
-        </div>
-      </van-tab>
-
-      <van-tab title="注册">
-        <van-field v-model="mobile"
-          clearable
-          type="tel"
-          label="手机号"
-          placeholder="请输入手机号" />
-        <van-field v-model="nick"
-          type="text"
-          label="用户"
-          placeholder="请输入用户名" />
-        <van-field v-model="pwd"
-          type="password"
-          label="密码"
-          placeholder="请输入密码" />
-        <van-field v-model="code"
-          center
-          clearable
-          label="短信验证码"
-          placeholder="请输入短信验证码">
-          <van-button slot="button" size="small" :disabled="!!vcodeSend" type="primary" @click="handleCodeSend">{{vcodeText}}</van-button>
-        </van-field>
-
-        <div class="btn-area">
-          <van-button type="danger" round size="large" @click="formSubmit">确定注册</van-button>
-        </div>
-      </van-tab>
-    </van-tabs>
-    <div class="copyright">copyright@<a href="https://github.com/JoeshuTT/v-shop">JoeshuT.T v-shop</a></div>
-  </div> -->
 </template>
 <script>
 import { Field, Tab, Tabs, Notify } from 'vant'
@@ -74,12 +28,8 @@ export default {
     }
   },
   created() {
-    // Notify({
-    //   message: '密码默认123456，新用户请自行完成[手机号]注册',
-    //   duration: 10000
-    // })
     const code = this.getQueryString('code')
-    this.login(code)
+    this.register(code)
   },
   methods: {
     getQueryString(name) {
@@ -87,27 +37,16 @@ export default {
       var r = window.location.search.substr(1).match(reg)
       if (r != null) return unescape(r[2]); return null
     },
-    async login(code) {
-      const res = await this.$request.post('/user/wxmp/login', { code })      
-      if (res.code === 10000) {
-        let _domian = 'http://' + document.domain + '/reg'
-        _domian = encodeURIComponent(_domian)
-        this.$request.get('/site/statistics').then(res => {
-          parent.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + res.data.wxMpAppid + '&redirect_uri=' + _domian + '&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect'
-        })
-        return
-      }
+    async register(code) {
+      const res = await this.$request.post('/user/wxmp/register/simple', { code })
       if (res.code !== 0) {
         this.$toast(res.msg)
         return
       }
-      util.storage.set('token', res.data.token)
-      util.storage.set('uid', res.data.uid)
-      this.$route.query.redirect ? this.$router.replace({ path: this.$route.query.redirect }) : this.$router.replace({ path: '/home' })
-      // this.$toast.clear()
-      this.$toast.success({
-        message: '登录成功',
-        duration: 1500
+      let _domian = 'http://' + document.domain + '/login'
+      _domian = encodeURIComponent(_domian)
+      this.$request.get('/site/statistics').then(res => {
+        parent.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + res.data.wxMpAppid + '&redirect_uri=' + _domian + '&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect'
       })
     },
     formSubmit() {

@@ -16,5 +16,5 @@ export function pay_balance(orderId, token) {
  * @param {String} token
  */
 export function wxPay_jsapi(money, nextAction, payName, remark = '', token) {
-  return request.post('/pay/wx/h5', { money, nextAction, payName, remark, token })
+  return request.post('/pay/wx/jsapi', { money, nextAction, payName, remark, token })
 }
